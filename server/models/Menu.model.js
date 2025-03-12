@@ -8,16 +8,8 @@ const menuSchema = new mongoose.Schema({
     },
     items: [
         {
-            name: { type: String, required: true, trim: true },
-            description: { type: String, trim: true },
-            price: { type: Number, required: true, min: 0 },
-            category: {
-                type: String,
-                enum: ['pizza', 'burger', 'sushi', 'salad', 'drink', 'dessert'],
-                required: true,
-            },
-            isAvailable: { type: Boolean, default: true },
-            discountPrice: { type: Number, min: 0 },
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'MenuItem',
         }
     ],
     isActive: {

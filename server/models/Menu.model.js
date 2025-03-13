@@ -8,8 +8,20 @@ const menuSchema = new mongoose.Schema({
     },
     items: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'MenuItem',
+            menuItem: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'MenuItem',
+                required: true
+            },
+            price: {
+                type: Number,
+                required: true,
+                min: 0,
+            },
+            isAvailable: {
+                type: Boolean,
+                default: true,
+            }
         }
     ],
     isActive: {

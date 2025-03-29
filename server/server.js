@@ -9,9 +9,9 @@ const app = express();
 
 app.use(express.json());
 
-app.use(errorMiddleware)
-
 app.use('/api/auth', authRouter);
+
+app.use(errorMiddleware);
 
 app.listen(PORT, async () => {
     console.log(`Food Delivery API is running on http://localhost:${PORT}`);

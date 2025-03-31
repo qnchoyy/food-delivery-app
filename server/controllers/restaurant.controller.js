@@ -1,11 +1,11 @@
 import Restaurant from '../models/Restaurant.model.js'
 
-export const createRestaurant = async (req, rex, next) => {
+export const createRestaurant = async (req, res, next) => {
     try {
         const { name, description, address, categories } = req.body;
 
         if (req.user.role !== "restaurant-owner") {
-            return res.status(403).json({ messsage: "Access denied. Only restaurants owners can create restaurants." });
+            return res.status(403).json({ messsage: "Access denied. Only restaurant owners can create restaurants." });
         }
 
         const restaurant = await Restaurant.create({
@@ -31,25 +31,25 @@ export const getAllRestaurants = async (req, res, next) => {
         const { category, city, search, sortBy, page = 1, limit = 10 } = req.query;
 
         const filter = { isApproved: true, active: true };
-
         if (category) filter.categories = category;
         if (city) filter["address.city"] = city;
         if (search) filter.name = { $regex: search, $options: "i" };
 
-        const skip = (page - 1) * limit;
+        const pageNumber = parseInt(page, 10) || 1;
+        const limitNumber = parseInt(limit, 10) || 10;
+        const skip = (pageNumber - 1) * limitNumber;
 
         const restaurants = await Restaurant.find(filter)
             .populate("owner", "name email")
             .sort(sortBy ? { [sortBy]: 1 } : { createdAt: -1 })
             .skip(skip)
-            .limit(parseInt(limit));
+            .limit(limitNumber);
 
         res.status(200).json({
             success: true,
             count: restaurants.length,
             data: restaurants,
         });
-
     } catch (error) {
         next(error);
     }
@@ -121,14 +121,14 @@ export const deleteRestaurant = async (req, res, next) => {
 };
 
 export const approveRestaurant = async (req, res, next) => {
-    try {
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: "Only admins can approve restaurants"
-            });
-        }
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({
+            success: false,
+            message: "Only admins can approve restaurants"
+        });
+    }
 
+    try {
         const restaurant = await Restaurant.findById(req.params.id);
 
         if (!restaurant) {

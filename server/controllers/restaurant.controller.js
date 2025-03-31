@@ -119,3 +119,32 @@ export const deleteRestaurant = async (req, res, next) => {
         next(error);
     }
 };
+
+export const approveRestaurant = async (req, res, next) => {
+    try {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: "Only admins can approve restaurants"
+            });
+        }
+
+        const restaurant = await Restaurant.findById(req.params.id);
+
+        if (!restaurant) {
+            return res.status(404).json({ success: false, message: "Restaurant not found" });
+        }
+
+        if (restaurant.isApproved) {
+            return res.status(400).json({ success: false, message: "Restaurant is already approved" });
+        }
+
+        restaurant.isApproved = true;
+        await restaurant.save();
+
+        res.status(200).json({ success: true, message: "Restaurant approved successfully", data: restaurant });
+
+    } catch (error) {
+        next(error);
+    }
+};

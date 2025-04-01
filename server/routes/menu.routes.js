@@ -1,19 +1,17 @@
-import { Router } from "express";
+import express from "express";
 import {
     getMenuByRestaurant,
     createMenu,
-    updateMenu,
     addItemToMenu,
-    removeItemFromMenu
+    approveMenu
 } from "../controllers/menu.controller.js";
-import authorize from "../middleware/auth.middleware.js";
+import authorize from '../middleware/auth.middleware.js'
 
-const menuRouter = Router();
+const menuRouter = express.Router();
 
-menuRouter.get("/:restaurantId", getMenuByRestaurant);
-menuRouter.post("/:restaurantId", authorize, createMenu);
-menuRouter.put("/:restaurantId", authorize, updateMenu);
-menuRouter.post("/:restaurantId/items", authorize, addItemToMenu);
-menuRouter.delete("/:restaurantId/items/:itemId", authorize, removeItemFromMenu);
+router.get("/:restaurantId", getMenuByRestaurant);
+router.post("/:restaurantId", authorize, createMenu);
+router.post("/:restaurantId/items", authorize, addItemToMenu);
+router.put("/:restaurantId/approve", authorize, approveMenu);
 
 export default menuRouter;

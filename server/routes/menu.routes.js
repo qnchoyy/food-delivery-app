@@ -9,9 +9,9 @@ import authorize from '../middleware/auth.middleware.js'
 
 const menuRouter = express.Router();
 
-router.get("/:restaurantId", getMenuByRestaurant);
-router.post("/:restaurantId", authorize, createMenu);
-router.post("/:restaurantId/items", authorize, addItemToMenu);
-router.put("/:restaurantId/approve", authorize, approveMenu);
+menuRouter.get("/:restaurantId", getMenuByRestaurant);
+menuRouter.post("/:restaurantId", authorize, createMenu);
+menuRouter.post("/:restaurantId/items", authorize, addItemToMenu);
+menuRouter.put("/:restaurantId/approve", authorize, approveMenu);
 
 export default menuRouter;

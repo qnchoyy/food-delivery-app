@@ -6,6 +6,7 @@ import errorMiddleware from './middleware/error.middleware.js';
 import authRouter from './routes/auth.routes.js';
 import restaurantRouter from './routes/restaurant.routes.js';
 import menuRouter from './routes/menu.routes.js';
+import menuItemRouter from './routes/menuItem.routes.js';
 
 const app = express();
 
@@ -13,7 +14,8 @@ app.use(express.json());
 
 app.use('/api/auth', authRouter);
 app.use('/api/restaurants', restaurantRouter);
-app.use("/api/menu", menuRouter)
+app.use("/api/menu", menuRouter);
+app.use("/api/menu-items", menuItemRouter);
 
 app.use(errorMiddleware);
 

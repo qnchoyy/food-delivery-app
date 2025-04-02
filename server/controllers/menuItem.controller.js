@@ -4,7 +4,7 @@ import Restaurant from "../models/Restaurant.model.js";
 
 export const getMenuItems = async (req, res, next) => {
     try {
-        const menuItems = await MenuItem.find({ restaurant: req.params.restaurantId });
+        const menuItems = await MenuItem.find({ restaurant: req.params.restaurantId }).lean();
         res.status(200).json({ success: true, count: menuItems.length, data: menuItems });
     } catch (error) {
         next(error);
@@ -13,7 +13,7 @@ export const getMenuItems = async (req, res, next) => {
 
 export const getMenuItemById = async (req, res, next) => {
     try {
-        const menuItem = await MenuItem.findById(req.params.id);
+        const menuItem = await MenuItem.findById(req.params.id).populate("restaurant").lean();
         if (!menuItem) {
             return res.status(404).json({ success: false, message: "Menu item not found" });
         }
@@ -56,31 +56,30 @@ export const createMenuItem = async (req, res, next) => {
 
 export const updateMenuItem = async (req, res, next) => {
     try {
-        let menuItem = await MenuItem.findById(req.params.id);
+        const menuItem = await MenuItem.findById(req.params.id).populate("restaurant");
         if (!menuItem) {
             return res.status(404).json({ success: false, message: "Menu item not found" });
         }
 
-        const restaurant = await Restaurant.findById(menuItem.restaurant);
-        if (restaurant.owner.toString() !== req.user._id.toString()) {
+        if (menuItem.restaurant.owner.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
                 message: "You are not authorized to update this menu item",
             });
         }
 
-        menuItem = await MenuItem.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const updatedMenuItem = await MenuItem.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
-        const menu = await Menu.findOne({ restaurant: menuItem.restaurant });
+        const menu = await Menu.findOne({ restaurant: menuItem.restaurant._id });
         if (menu) {
             const menuItemIndex = menu.items.findIndex(item => item.menuItem.toString() === menuItem._id.toString());
             if (menuItemIndex !== -1) {
-                menu.items[menuItemIndex].price = menuItem.price;
+                menu.items[menuItemIndex].price = updatedMenuItem.price;
                 await menu.save();
             }
         }
 
-        res.status(200).json({ success: true, message: "Menu item updated successfully", data: menuItem });
+        res.status(200).json({ success: true, message: "Menu item updated successfully", data: updatedMenuItem });
     } catch (error) {
         next(error);
     }
@@ -88,20 +87,19 @@ export const updateMenuItem = async (req, res, next) => {
 
 export const deleteMenuItem = async (req, res, next) => {
     try {
-        const menuItem = await MenuItem.findById(req.params.id);
+        const menuItem = await MenuItem.findById(req.params.id).populate("restaurant");
         if (!menuItem) {
             return res.status(404).json({ success: false, message: "Menu item not found" });
         }
 
-        const restaurant = await Restaurant.findById(menuItem.restaurant);
-        if (restaurant.owner.toString() !== req.user._id.toString()) {
+        if (menuItem.restaurant.owner.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 success: false,
                 message: "You are not authorized to delete this menu item",
             });
         }
 
-        const menu = await Menu.findOne({ restaurant: menuItem.restaurant });
+        const menu = await Menu.findOne({ restaurant: menuItem.restaurant._id });
         if (menu) {
             menu.items = menu.items.filter(item => item.menuItem.toString() !== menuItem._id.toString());
             await menu.save();

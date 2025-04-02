@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 import {
     getMenuByRestaurant,
     createMenu,
@@ -7,7 +7,7 @@ import {
 } from "../controllers/menu.controller.js";
 import authorize from '../middleware/auth.middleware.js'
 
-const menuRouter = express.Router();
+const menuRouter = Router();
 
 menuRouter.get("/:restaurantId", getMenuByRestaurant);
 menuRouter.post("/:restaurantId", authorize, createMenu);

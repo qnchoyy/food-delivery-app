@@ -5,7 +5,7 @@ export const createRestaurant = async (req, res, next) => {
         const { name, description, address, categories } = req.body;
 
         if (req.user.role !== "restaurant-owner") {
-            return res.status(403).json({ messsage: "Access denied. Only restaurant owners can create restaurants." });
+            return res.status(403).json({ message: "Access denied. Only restaurant owners can create restaurants." });
         }
 
         const restaurant = await Restaurant.create({

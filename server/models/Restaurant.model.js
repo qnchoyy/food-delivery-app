@@ -51,7 +51,7 @@ const restaurantSchema = new mongoose.Schema({
         min: [1, 'Rating cannot be less than 1'],
         max: [5, 'Rating cannot be more than 5']
     },
-    active: {
+    isActive: {
         type: Boolean,
         default: true
     },

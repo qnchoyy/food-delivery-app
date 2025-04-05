@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
         enum: ['customer', 'restaurant-owner', 'delivery-person', 'admin'],
         default: 'customer'
     },
-    active: {
+    isActive: {
         type: Boolean,
         default: true
     }

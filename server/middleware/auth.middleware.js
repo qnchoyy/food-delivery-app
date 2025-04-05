@@ -18,7 +18,7 @@ const authorize = async (req, res, next) => {
 
         const user = await User.findById(decoded.userId);
 
-        if (!user || !user.active) {
+        if (!user || !user.isActive) {
             return res.status(403).json({ success: false, message: 'Account inactive or not found. Access denied.' });
         }
 

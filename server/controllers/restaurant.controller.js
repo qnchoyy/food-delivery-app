@@ -30,7 +30,7 @@ export const getAllRestaurants = async (req, res, next) => {
     try {
         const { category, city, search, sortBy, page = 1, limit = 10 } = req.query;
 
-        const filter = { isApproved: true, active: true };
+        const filter = { isApproved: true, isActive: true };
         if (category) filter.categories = category;
         if (city) filter["address.city"] = city;
         if (search) filter.name = { $regex: search, $options: "i" };

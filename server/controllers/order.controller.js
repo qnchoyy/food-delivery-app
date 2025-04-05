@@ -81,7 +81,7 @@ export const createOrder = async (req, res, next) => {
             return res.status(404).json({ success: false, message: "Restaurant not found" });
         }
 
-        if (!restaurant.isApproved || !restaurant.active) {
+        if (!restaurant.isApproved || !restaurant.isActive) {
             return res.status(400).json({ success: false, message: "This restaurant is not available for orders" });
         }
 

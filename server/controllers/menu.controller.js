@@ -8,7 +8,7 @@ export const getMenuByRestaurant = async (req, res, next) => {
             restaurant: req.params.restaurantId,
             isActive: true,
             isApproved: true,
-        }).populate("items.menuItem");
+        }).populate("items.menuItem", "name description price category isAvailable");
 
         if (!menu) {
             return res.status(404).json({ success: false, message: "Menu not found" });

@@ -44,7 +44,11 @@ export const createMenuItem = async (req, res, next) => {
 
         const menu = await Menu.findOne({ restaurant: req.params.restaurantId });
         if (menu) {
-            menu.items.push({ menuItem: menuItem._id, price: menuItem.price });
+            menu.items.push({
+                menuItem: menuItem._id,
+                price: menuItem.price,
+                isAvailable: menuItem.isAvailable
+            });
             await menu.save();
         }
 
@@ -75,6 +79,7 @@ export const updateMenuItem = async (req, res, next) => {
             const menuItemIndex = menu.items.findIndex(item => item.menuItem.toString() === menuItem._id.toString());
             if (menuItemIndex !== -1) {
                 menu.items[menuItemIndex].price = updatedMenuItem.price;
+                menu.items[menuItemIndex].isAvailable = updatedMenuItem.isAvailable;
                 await menu.save();
             }
         }

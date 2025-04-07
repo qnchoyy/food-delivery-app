@@ -56,6 +56,10 @@ export const addItemToMenu = async (req, res, next) => {
             return res.status(404).json({ success: false, message: "Menu not found" });
         }
 
+        if (!menu.isActive) {
+            return res.status(400).json({ success: false, message: "Cannot add items to inactive menu" });
+        }
+
         if (menu.restaurant.owner.toString() !== req.user._id.toString()) {
             return res.status(403).json({ success: false, message: "You are not authorized to update this menu" });
         }
@@ -69,7 +73,11 @@ export const addItemToMenu = async (req, res, next) => {
             isAvailable: req.body.isAvailable,
         });
 
-        menu.items.push({ menuItem: menuItem._id, price: req.body.price });
+        menu.items.push({
+            menuItem: menuItem._id,
+            price: req.body.price,
+            isAvailable: menuItem.isAvailable
+        });
         await menu.save();
 
         res.status(200).json({ success: true, message: "Item added to menu", data: menu });
